@@ -64,6 +64,11 @@ export const signup = async (req, res) => {
 
 export const login = async (req, res) => {
     const { email, password } = req.body;
+
+        if (!email || !password) {
+        return res.status(400).json({ message: "All fields are required" });
+    }
+
     try {
         const user = await User.findOne({ email });
         if (!user) {
@@ -74,8 +79,9 @@ export const login = async (req, res) => {
         if (!isPasswordCorrect) {
             return res.status(400).json({ message: "Invalid credentials" });
         }
-        
+
         generateToken(user._id, res);
+
         res.status(200).json({
             _id: user._id,
             fullName: user.fullName,
