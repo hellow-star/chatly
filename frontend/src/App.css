@@ -1,42 +1,73 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+.wave {
+  position: absolute;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  border-radius: 50%;
+  filter: blur(40px);
+  opacity: 0.6;
+  transform: rotate(30deg);
 }
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+.particle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  filter: blur(2px);
+  animation: float 6s infinite ease-in-out alternate;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+@keyframes float {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.6;
   }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+  100% {
+    transform: translateY(-100px) rotate(360deg);
+    opacity: 0.1;
   }
 }
-
-.card {
-  padding: 2em;
+.connector {
+  position: absolute;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.2);
+  transform-origin: center;
+  animation: pulse 3s infinite alternate;
 }
-
-.read-the-docs {
-  color: #888;
+@keyframes pulse {
+  0% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+.hexagon {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  opacity: 0.3;
+}
+.star {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  clip-path: polygon(
+    50% 0%,
+    61% 25%,
+    98% 25%,
+    68% 40%,
+    79% 75%,
+    50% 60%,
+    21% 75%,
+    32% 40%,
+    1% 25%,
+    38% 25%
+  );
+  background: linear-gradient(45deg, #fff, #e0d8ff);
+  opacity: 0.8;
+  filter: blur(1px);
 }
