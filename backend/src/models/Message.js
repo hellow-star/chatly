@@ -13,7 +13,8 @@ const messageSchema = new mongoose.Schema({
   },
   text: {
     type: String,
-    required: true,
+    trim: true,
+    maxlength: 1000,
   },
   image: {
     type: String, // URL or path to the image
