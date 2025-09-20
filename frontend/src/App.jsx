@@ -1,12 +1,28 @@
 import React from "react";
-import { Routes, Route } from "react-router";
+import { Navigate, Routes, Route } from "react-router";
 import ChatPage from "./pages/ChatPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
+import TestPage from "./pages/TestPage";
 import "./App.css";
+import "./styles/animations.css";
+import { useAuthStore } from "./stores/useAuthStore";
+import { axiosInstance } from "./lib/axios";
+import { useEffect } from "react";
+import PageLoader from "./components/PageLoader";
+import { Toaster } from "react-hot-toast";
 
 function App() {
-  const { authUser, isLoading, login } = useAuthStore();
+  const { checkAuth, isCheckingAuth, authUser } = useAuthStore();
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  console.log("Auth User:", authUser);
+
+  if (isCheckingAuth) return <PageLoader />;
+
   return (
     <div className="bg-gradient-to-br from-indigo-900 via-blue-400 to-pink-700 h-screen w-full relative overflow-hidden flex items-center justify-center">
       {/* 背景装饰元素 —— 保持绝对定位，不影响内容布局 */}
@@ -35,10 +51,19 @@ function App() {
       {/* 👇 路由内容区域 —— 相对定位，确保在装饰层之上 */}
       <div className="relative z-10">
         <Routes>
-          <Route path="/" element={<ChatPage />} />
-          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/"
+            element={authUser ? <ChatPage /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/login"
+            element={!authUser ? <LoginPage /> : <Navigate to="/" />}
+          />
           <Route path="/signup" element={<SignupPage />} />
+          <Route path="/test" element={<TestPage />} />
         </Routes>
+
+        <Toaster />
       </div>
     </div>
   );
