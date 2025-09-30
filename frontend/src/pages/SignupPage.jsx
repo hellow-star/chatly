@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 
 const SignupPage = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
 
   useEffect(() => {
@@ -21,49 +21,49 @@ const SignupPage = () => {
   }, []);
 
   const getPasswordStrength = (password) => {
-    if (!password) return { score: 0, label: '', color: '' };
+    if (!password) return { score: 0, label: "", color: "" };
 
     let score = 0;
     let feedback = [];
 
     // Length check
     if (password.length >= 8) score += 1;
-    else feedback.push('At least 8 characters');
+    else feedback.push("At least 8 characters");
 
     // Lowercase check
     if (/[a-z]/.test(password)) score += 1;
-    else feedback.push('Lowercase letter');
+    else feedback.push("Lowercase letter");
 
     // Uppercase check
     if (/[A-Z]/.test(password)) score += 1;
-    else feedback.push('Uppercase letter');
+    else feedback.push("Uppercase letter");
 
     // Number check
     if (/\d/.test(password)) score += 1;
-    else feedback.push('Number');
+    else feedback.push("Number");
 
     // Special character check
     if (/[^A-Za-z0-9]/.test(password)) score += 1;
-    else feedback.push('Special character');
+    else feedback.push("Special character");
 
-    let label = '';
-    let color = '';
+    let label = "";
+    let color = "";
 
     if (score === 0) {
-      label = '';
-      color = '';
+      label = "";
+      color = "";
     } else if (score <= 2) {
-      label = 'Weak';
-      color = 'text-red-400';
+      label = "Weak";
+      color = "text-red-400";
     } else if (score <= 3) {
-      label = 'Fair';
-      color = 'text-yellow-400';
+      label = "Fair";
+      color = "text-yellow-400";
     } else if (score <= 4) {
-      label = 'Good';
-      color = 'text-green-400';
+      label = "Good";
+      color = "text-green-400";
     } else {
-      label = 'Strong';
-      color = 'text-green-500';
+      label = "Strong";
+      color = "text-green-500";
     }
 
     return { score, label, color, feedback };
@@ -73,15 +73,15 @@ const SignupPage = () => {
     register,
     handleSubmit,
     formState: { errors },
-    watch
+    watch,
   } = useForm();
 
   // Watch password field for real-time updates
-  const watchedPassword = watch('password');
+  const watchedPassword = watch("password");
 
   // Update local password state when form password changes
   React.useEffect(() => {
-    setPassword(watchedPassword || '');
+    setPassword(watchedPassword || "");
   }, [watchedPassword]);
 
   const { signUp, isSigningUp } = useAuthStore();
@@ -110,7 +110,7 @@ const SignupPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-600 bg-gradient-to-r flex flex-col items-center justify-center p-5">
+    <div>
       <div className="max-w-md w-full">
         <Card>
           <motion.h2
@@ -137,19 +137,19 @@ const SignupPage = () => {
                 name="fullName"
                 register={register}
                 validation={{
-                  required: 'Full name is required',
+                  required: "Full name is required",
                   minLength: {
                     value: 2,
-                    message: 'Full name must be at least 2 characters'
+                    message: "Full name must be at least 2 characters",
                   },
                   maxLength: {
                     value: 50,
-                    message: 'Full name must be less than 50 characters'
+                    message: "Full name must be less than 50 characters",
                   },
                   pattern: {
                     value: /^[a-zA-Z\s]+$/,
-                    message: 'Full name can only contain letters and spaces'
-                  }
+                    message: "Full name can only contain letters and spaces",
+                  },
                 }}
                 error={errors.fullName}
                 placeholder="John Doe"
@@ -166,15 +166,15 @@ const SignupPage = () => {
                 name="email"
                 register={register}
                 validation={{
-                  required: 'Email address is required',
+                  required: "Email address is required",
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: 'Please enter a valid email address'
+                    message: "Please enter a valid email address",
                   },
                   maxLength: {
                     value: 100,
-                    message: 'Email must be less than 100 characters'
-                  }
+                    message: "Email must be less than 100 characters",
+                  },
                 }}
                 error={errors.email}
                 placeholder="you@example.com"
@@ -191,21 +191,15 @@ const SignupPage = () => {
                 name="password"
                 register={register}
                 validation={{
-                  required: 'Password is required',
+                  required: "Password is required",
                   minLength: {
                     value: 8,
-                    message: 'Password must be at least 8 characters'
+                    message: "Password must be at least 8 characters",
                   },
                   maxLength: {
                     value: 128,
-                    message: 'Password must be less than 128 characters'
+                    message: "Password must be less than 128 characters",
                   },
-                  validate: {
-                    hasLowercase: (value) => /[a-z]/.test(value) || 'Password must contain a lowercase letter',
-                    hasUppercase: (value) => /[A-Z]/.test(value) || 'Password must contain an uppercase letter',
-                    hasNumber: (value) => /\d/.test(value) || 'Password must contain a number',
-                    hasSpecial: (value) => /[^A-Za-z0-9]/.test(value) || 'Password must contain a special character'
-                  }
                 }}
                 error={errors.password}
                 placeholder="••••••••"
@@ -213,7 +207,9 @@ const SignupPage = () => {
                 aria-required="true"
                 autoComplete="new-password"
                 icon={<Lock size={20} />}
-                toggleIcon={showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                toggleIcon={
+                  showPassword ? <EyeOff size={20} /> : <Eye size={20} />
+                }
                 onToggle={() => setShowPassword(!showPassword)}
                 onChange={(e) => {
                   setPassword(e.target.value);
@@ -227,7 +223,11 @@ const SignupPage = () => {
                   transition={{ duration: 0.2 }}
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <span className={`text-sm font-medium ${getPasswordStrength(password).color}`}>
+                    <span
+                      className={`text-sm font-medium ${
+                        getPasswordStrength(password).color
+                      }`}
+                    >
                       Password strength: {getPasswordStrength(password).label}
                     </span>
                   </div>
@@ -235,30 +235,24 @@ const SignupPage = () => {
                     <div
                       className={`h-2 rounded-full transition-all duration-300 ${
                         getPasswordStrength(password).score <= 2
-                          ? 'bg-red-500'
+                          ? "bg-red-500"
                           : getPasswordStrength(password).score <= 3
-                          ? 'bg-yellow-500'
+                          ? "bg-yellow-500"
                           : getPasswordStrength(password).score <= 4
-                          ? 'bg-green-400'
-                          : 'bg-green-500'
+                          ? "bg-green-400"
+                          : "bg-green-500"
                       }`}
                       style={{
-                        width: `${(getPasswordStrength(password).score / 5) * 100}%`,
+                        width: `${
+                          (getPasswordStrength(password).score / 5) * 100
+                        }%`,
                       }}
                     />
                   </div>
-                  {getPasswordStrength(password).score < 5 && (
-                    <div className="mt-2 text-sm text-gray-300">
-                      Requirements: {getPasswordStrength(password).feedback.join(', ')}
-                    </div>
-                  )}
                 </motion.div>
               )}
             </motion.div>
-            <motion.div
-              className="mb-4"
-              variants={fieldVariants}
-            >
+            <motion.div className="mb-4" variants={fieldVariants}>
               <label className="flex items-start">
                 <input
                   type="checkbox"
@@ -268,29 +262,42 @@ const SignupPage = () => {
                   aria-label="Accept terms and privacy policy"
                 />
                 <span className="text-sm text-gray-200">
-                  I agree to the{' '}
-                  <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-blue-300 hover:text-blue-200 underline">
+                  I agree to the{" "}
+                  <a
+                    href="/terms"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-300 hover:text-blue-200 underline"
+                  >
                     Terms of Service
-                  </a>{' '}
-                  and{' '}
-                  <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-300 hover:text-blue-200 underline">
+                  </a>{" "}
+                  and{" "}
+                  <a
+                    href="/privacy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-300 hover:text-blue-200 underline"
+                  >
                     Privacy Policy
                   </a>
                 </span>
               </label>
               <motion.p
                 className={`mt-1 text-sm text-red-400 transition-all duration-200 ${
-                  termsAccepted ? 'opacity-0 invisible h-0' : 'opacity-1 visible h-auto'
+                  termsAccepted
+                    ? "opacity-0 invisible h-0"
+                    : "opacity-1 visible h-auto"
                 }`}
                 initial={false}
                 animate={{
                   opacity: termsAccepted ? 0 : 1,
-                  height: termsAccepted ? 0 : 'auto',
-                  visibility: termsAccepted ? 'hidden' : 'visible'
+                  height: termsAccepted ? 0 : "auto",
+                  visibility: termsAccepted ? "hidden" : "visible",
                 }}
                 transition={{ duration: 0.2 }}
               >
-                Please accept the Terms of Service and Privacy Policy to continue
+                Please accept the Terms of Service and Privacy Policy to
+                continue
               </motion.p>
             </motion.div>
             <Button
