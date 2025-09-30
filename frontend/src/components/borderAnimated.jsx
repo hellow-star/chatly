@@ -24,7 +24,7 @@ const BorderAnimated = ({ children, className = '', ...props }) => {
           maskComposite: 'exclude',
         }}
       />
-      <div className="relative bg-white rounded-lg">
+      <div className="relative bg-gray-900/80 backdrop-blur-sm rounded-lg">
         {children}
       </div>
     </div>
