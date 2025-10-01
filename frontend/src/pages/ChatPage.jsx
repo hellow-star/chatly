@@ -13,7 +13,7 @@ function ChatPage() {
   const { activeTab, selectedUser, isChatAreaExpanded } = useChatStore();
   return (
     <div
-      className={`relative w-full h-[800px] grid grid-cols-1 ${
+      className={`relative w-full h-screen grid grid-cols-1 ${
         isChatAreaExpanded
           ? "md:grid-cols-[0px_1fr]"
           : "md:grid-cols-[300px_1fr]"
@@ -30,7 +30,7 @@ function ChatPage() {
         </div>
 
         {/* RIGHT SIDE - Chat Area - Now uses 1fr to take all remaining space */}
-        <div className="flex flex-col bg-slate-900/50 backdrop-blur-sm rounded-r-xl">
+        <div className="flex flex-col min-h-0 h-full bg-slate-900/50 backdrop-blur-sm rounded-r-xl overflow-hidden">
           {selectedUser ? <ChatContainer /> : <NoConversationPlaceHolder />}
         </div>
       </BorderAnimated>

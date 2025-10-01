@@ -1,6 +1,7 @@
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 import { create } from "zustand";
+import { useAuthStore } from "./useAuthStore";
 
 export const useChatStore = create((set, get) => ({
   allContacts: [],
@@ -13,7 +14,8 @@ export const useChatStore = create((set, get) => ({
   isSoundEnabled: JSON.parse(localStorage.getItem("isSoundEnabled")) === true,
   isChatAreaExpanded: false,
 
-  toggleChatArea: () => set((state) => ({ isChatAreaExpanded: !state.isChatAreaExpanded })),
+  toggleChatArea: () =>
+    set((state) => ({ isChatAreaExpanded: !state.isChatAreaExpanded })),
 
   toggleSound: () => {
     localStorage.setItem("isSoundEnabled", !get().isSoundEnabled);
@@ -62,6 +64,40 @@ export const useChatStore = create((set, get) => ({
       toast.error(error.response?.data?.messages || "Error fetching messages");
     } finally {
       set({ isMessagesLoading: false });
+    }
+  },
+
+  sendMessage: async (messageData) => {
+    const { selectedUser, messages } = get();
+    const { authUser } = useAuthStore.getState();
+
+    const tempId = `temp-${Date.now()}`;
+    const optimisticMessage = {
+      _id: tempId,
+      senderId: authUser._id,
+      receiverId: selectedUser._id,
+      text: messageData.text,
+      image: messageData.image,
+      createdAt: new Date().toISOString(),
+      isSending: true,
+    };
+
+    set({ messages: messages.concat(optimisticMessage) });
+
+    try {
+      const res = await axiosInstance.post(
+        `/messages/send/${selectedUser._id}`,
+        messageData
+      );
+      set({
+        messages: messages.concat(res.data),
+      });
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+      //remove optimistic messages if fail
+      set({
+        messages: messages.filter((msg) => msg._id !== tempId),
+      });
     }
   },
 }));
