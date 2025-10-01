@@ -11,6 +11,9 @@ export const useChatStore = create((set, get) => ({
   isUsersLoading: false,
   isMessagesLoading: false,
   isSoundEnabled: JSON.parse(localStorage.getItem("isSoundEnabled")) === true,
+  isChatAreaExpanded: false,
+
+  toggleChatArea: () => set((state) => ({ isChatAreaExpanded: !state.isChatAreaExpanded })),
 
   toggleSound: () => {
     localStorage.setItem("isSoundEnabled", !get().isSoundEnabled);
@@ -47,6 +50,18 @@ export const useChatStore = create((set, get) => ({
       );
     } finally {
       set({ isUsersLoading: false });
+    }
+  },
+
+  getMessagesByUserId: async (userId) => {
+    set({ isMessagesLoading: true });
+    try {
+      const res = await axiosInstance.get(`messages/conversations/${userId}`);
+      set({ messages: res.data });
+    } catch (error) {
+      toast.error(error.response?.data?.messages || "Error fetching messages");
+    } finally {
+      set({ isMessagesLoading: false });
     }
   },
 }));
