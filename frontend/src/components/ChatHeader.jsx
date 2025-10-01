@@ -2,12 +2,12 @@ import { useEffect } from "react";
 import { useChatStore } from "../stores/useChatStore";
 import { Maximize, Minimize, XIcon } from "lucide-react";
 
-function ChatHeader() {
+function ChatHeader({ className = "" }) {
   const { selectedUser, setSelectedUser, isChatAreaExpanded, toggleChatArea } =
     useChatStore();
 
   return (
-    <div className="flex justify-between items-center bg-slate-800/50 border-b border-slate-700/50 max-h-[84px] px-6 flex-1 gap-12">
+    <div className={`flex justify-between items-center bg-slate-800/50 border-b border-slate-700/50 max-h-[84px] px-6 gap-12 ${className}`}>
       <div className="flex items-center space-x-3">
         <div className="avatar online">
           <div className="w-12 rounded-full">

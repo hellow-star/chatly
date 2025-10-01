@@ -17,11 +17,11 @@ function ChatContainer() {
   }, [selectedUser, getMessagesByUserId]);
 
   return (
-    <>
+    <div className="flex flex-col h-full">
       <ChatHeader />
-      <div className="flex-1 px-6 overflow-y-auto py-8">
+      <div className="flex-1 overflow-y-auto p-4 min-h-0 max-h-[calc(100vh-150px)]">
         {messages.length > 0 && !isMessagesLoading ? (
-          <div className="max-w-3xl mx-auto space-y-6">
+          <div className="space-y-6">
             {messages.map((msg) => (
               <div
                 key={msg._id}
@@ -45,7 +45,12 @@ function ChatContainer() {
                   )}
                   {msg.text && <p className="mt-2"> {msg.text} </p>}
                   <p className="text-xs mt-1 opacity-75 flex items-center gap-1">
-                    {new Date(msg.timestamp).toISOString().slice(11, 16)}
+                    {msg.isSending
+                      ? "sending..."
+                      : new Date(msg.createdAt).toLocaleTimeString(undefined, {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
                   </p>
                 </div>
               </div>
@@ -59,7 +64,7 @@ function ChatContainer() {
       </div>
 
       <MessageInput />
-    </>
+    </div>
   );
 }
 
