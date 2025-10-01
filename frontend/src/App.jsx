@@ -1,4 +1,4 @@
-import { Navigate, Routes, Route } from "react-router";
+import { Navigate, Routes, Route, useLocation } from "react-router";
 import ChatPage from "./pages/ChatPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
@@ -13,6 +13,8 @@ import { Toaster } from "react-hot-toast";
 
 function App() {
   const { checkAuth, isCheckingAuth, authUser } = useAuthStore();
+  const location = useLocation();
+  const isChatPage = location.pathname === "/";
 
   useEffect(() => {
     checkAuth();
@@ -48,7 +50,7 @@ function App() {
       <div className="absolute top-1/4 left-1/3 w-16 h-16 rounded-full bg-gradient-to-r from-cyan-300 to-purple-300 blur-xl opacity-20"></div>
 
       {/* 👇 路由内容区域 —— 相对定位，确保在装饰层之上 */}
-      <div className="relative z-10">
+      <div className={`relative z-10 ${isChatPage ? "w-[1400px]" : ""}`}>
         <Routes>
           <Route
             path="/"

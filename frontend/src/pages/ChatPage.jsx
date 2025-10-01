@@ -10,12 +10,18 @@ import ContactList from "../components/ContactList";
 
 function ChatPage() {
   const { logout } = useAuthStore();
-  const { activeTab, selectedUser } = useChatStore();
+  const { activeTab, selectedUser, isChatAreaExpanded } = useChatStore();
   return (
-    <div className="relative w-full max-w-6xl h-[800px] flex">
-      <BorderAnimated className="flex w-full h-full rounded-xl">
+    <div
+      className={`relative w-full h-[800px] grid grid-cols-1 ${
+        isChatAreaExpanded
+          ? "md:grid-cols-[0px_1fr]"
+          : "md:grid-cols-[300px_1fr]"
+      } transition-all duration-300 ease-in-out`}
+    >
+      <BorderAnimated className="col-span-2 grid w-full h-full rounded-xl grid-cols-subgrid">
         {/* LEFT SIDE - Sidebar */}
-        <div className="w-80 bg-slate-800/50 backdrop-blur-sm flex flex-col rounded-l-xl">
+        <div className="bg-slate-800/50 backdrop-blur-sm flex flex-col rounded-l-xl overflow-hidden">
           <ProfileHeader />
           <ActiveTabSwitch />
           <div className="flex-1 overflow-y-auto p-4 space-y-2">
@@ -23,8 +29,8 @@ function ChatPage() {
           </div>
         </div>
 
-        {/* RIGHT SIDE - Chat Area */}
-        <div className="flex-1 flex flex-col bg-slate-900/50 backdrop-blur-sm rounded-r-xl">
+        {/* RIGHT SIDE - Chat Area - Now uses 1fr to take all remaining space */}
+        <div className="flex flex-col bg-slate-900/50 backdrop-blur-sm rounded-r-xl">
           {selectedUser ? <ChatContainer /> : <NoConversationPlaceHolder />}
         </div>
       </BorderAnimated>
