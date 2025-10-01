@@ -1,4 +1,3 @@
-import React from "react";
 import { Navigate, Routes, Route } from "react-router";
 import ChatPage from "./pages/ChatPage";
 import LoginPage from "./pages/LoginPage";
