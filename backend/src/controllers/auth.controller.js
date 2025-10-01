@@ -104,13 +104,31 @@ export const logout = (_, res) => {
 
 export const updateProfile = async (req, res) => {
     try {
-        const {profilePicture} = req.body;
-        if(!profilePicture) {
+        const { profilePicture } = req.body;
+        if (!profilePicture) {
             return res.status(400).json({ message: "Profile picture is required" });
         }
 
+        // Check if profilePicture is a string before accessing string methods
+        if (typeof profilePicture !== 'string') {
+            return res.status(400).json({ message: "Profile picture must be a string" });
+        }
+
+        // Validate if the profilePicture is a data URL (base64)
+        if (!profilePicture.startsWith('data:')) {
+            return res.status(400).json({ message: "Profile picture must be a base64 data URL" });
+        }
+
         const userId = req.user._id;
-        const uploadResponse = await cloudinary.uploader.upload(profilePicture);
+
+        // Upload base64 image to cloudinary with options for URL uploads
+        const uploadResponse = await cloudinary.uploader.upload(profilePicture, {
+            folder: 'profile_pictures',
+            use_filename: false,
+            unique_filename: true,
+            overwrite: false,
+            resource_type: 'image'
+        });
 
         const updatedUser = await User.findByIdAndUpdate(
             userId,
