@@ -26,7 +26,7 @@ function ContactList() {
             {/* TODO： FIX THIS ONLINE STATUS AND MAKE IT WORK WITH SOCKET */}
             <div
               className={`avatar ${
-                onlineUsers.incluces(contact._id) ? "online " : "offline"
+                onlineUsers.includes(contact._id) ? "online " : "offline"
               }`}
             >
               <div className="size-12 rounded-full">
