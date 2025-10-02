@@ -14,11 +14,11 @@ import {
 
 import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
+import { app, server } from "./lib/socket.js";
 
 // Validate environment variables
 validateEnv();
 
-const app = express();
 const PORT = ENV.PORT || 3000;
 const __dirname = path.resolve();
 
@@ -33,17 +33,21 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
-app.get("/api/test", (req, res) => res.json({ message: "Hello from backend!" }));
+app.get("/api/test", (req, res) =>
+  res.json({ message: "Hello from backend!" })
+);
 
 // Production setup
 if (ENV.NODE_ENV === "production") {
   app.use(compressionMiddleware());
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
-  app.get("*", (_, res) => res.sendFile(path.join(__dirname, "../frontend/dist/index.html")));
+  app.get("*", (_, res) =>
+    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"))
+  );
 }
 
 // Start server
-app.listen(PORT, "0.0.0.0", async () => {
+server.listen(PORT, "0.0.0.0", async () => {
   console.log(`Server running on port ${PORT}`);
   await connectDB();
 });
