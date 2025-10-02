@@ -56,7 +56,7 @@ export const getConversationWithContact = async (req, res) => {
         { senderId: myId, recipientId: userToChatId },
         { senderId: userToChatId, recipientId: myId },
       ],
-    }).sort({ timestamp: 1 }); // Sort by timestamp in ascending order
+    }).sort({ createdAt: 1 }); // Sort by timestamp in ascending order
     res.status(200).json(conversation);
   } catch (error) {
     console.error("Error fetching conversation:", error);

@@ -2,6 +2,7 @@ import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 import { create } from "zustand";
 import { useAuthStore } from "./useAuthStore";
+import audioService from "../services/audioService";
 
 export const useChatStore = create((set, get) => ({
   allContacts: [],
@@ -11,15 +12,15 @@ export const useChatStore = create((set, get) => ({
   selectedUser: null,
   isUsersLoading: false,
   isMessagesLoading: false,
-  isSoundEnabled: JSON.parse(localStorage.getItem("isSoundEnabled")) === true,
+  isSoundEnabled: audioService.isSoundEnabledState(),
   isChatAreaExpanded: false,
 
   toggleChatArea: () =>
     set((state) => ({ isChatAreaExpanded: !state.isChatAreaExpanded })),
 
   toggleSound: () => {
-    localStorage.setItem("isSoundEnabled", !get().isSoundEnabled);
-    set({ isSoundEnabled: !get().isSoundEnabled });
+    const newSoundState = audioService.toggleSound();
+    set({ isSoundEnabled: newSoundState });
   },
 
   setActiveTab: (tab) =>
@@ -82,53 +83,69 @@ export const useChatStore = create((set, get) => ({
       isSending: true,
     };
 
-    set({ messages: messages.concat(optimisticMessage) });
+    set((state) => ({ messages: state.messages.concat(optimisticMessage) }));
 
     try {
       const res = await axiosInstance.post(
         `/messages/send/${selectedUser._id}`,
         messageData
       );
-      set({
-        messages: messages.concat(res.data),
-      });
+      const temporaryId = optimisticMessage._id;
+      set((state) => ({
+        messages: state.messages.map((msg) =>
+          msg._id === temporaryId ? res.data : msg
+        ),
+      }));
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong");
       //remove optimistic messages if fail
-      set({
-        messages: messages.filter((msg) => msg._id !== tempId),
-      });
+      set((state) => ({
+        messages: state.messages.filter((msg) => msg._id !== tempId),
+      }));
     }
   },
 
+  // Store the message listener function to allow proper cleanup
+  _messageListener: null,
+
   subscribeToMessages: () => {
-    const { selectedUser, isSoundEnabled } = get();
+    const { selectedUser } = get();
 
     if (!selectedUser) return;
 
     const socket = useAuthStore.getState().socket;
 
-    socket.on("newMessage", (newMessage) => {
+    // Clean up any existing listener first
+    if (get()._messageListener) {
+      socket.off("newMessage", get()._messageListener);
+    }
+
+    // Create a new listener function
+    const messageListener = (newMessage) => {
       const isMessageSentFromSelectedUser =
         newMessage.senderId === selectedUser._id;
-      if (!isMessageSentFromSelectedUser) return;
+      if (!isMessageSentFromSelectedUser) {
+        console.debug("ChatStore: Ignoring message from non-selected user", newMessage.senderId);
+        return;
+      }
 
+      console.debug("ChatStore: Adding new message to conversation", newMessage);
       const currentMessages = get().messages;
       set({ messages: [...currentMessages, newMessage] });
+    };
 
-      if (isSoundEnabled) {
-        const notificationSound = new Audio("/sounds/notification.mp3");
-
-        notificationSound.currentTime = 0;
-        notificationSound
-          .play()
-          .catch((e) => console.log("Audio play failed:", e));
-      }
-    });
+    // Store the listener and attach it
+    set({ _messageListener: messageListener });
+    socket.on("newMessage", messageListener);
   },
 
   unSubscribeFromMessages: () => {
     const socket = useAuthStore.getState().socket;
-    socket.off("newMessage");
+    const messageListener = get()._messageListener;
+
+    if (messageListener) {
+      socket.off("newMessage", messageListener);
+      set({ _messageListener: null });
+    }
   },
 }));

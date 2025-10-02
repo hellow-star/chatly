@@ -3,6 +3,8 @@ import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 import { data } from "react-router";
 import { io } from "socket.io-client";
+import audioService from "../services/audioService";
+import { useChatStore } from "./useChatStore";
 
 const BASE_URL =
   import.meta.env.MODE === "development" ? "http://localhost:3000" : "/";
@@ -100,10 +102,27 @@ export const useAuthStore = create((set, get) => ({
     socket.on("getOnlineUsers", (userIds) => {
       set({ onlineUsers: userIds });
     });
+
+    // Global message listener for audio notifications
+    socket.on("newMessage", (newMessage) => {
+      console.debug("AuthStore: Received new message", newMessage);
+
+      // Check if sound is enabled globally and play notification
+      if (audioService.isSoundEnabledState()) {
+        console.debug("AuthStore: Sound enabled, playing notification");
+        audioService.playNotificationSound();
+      } else {
+        console.debug("AuthStore: Sound disabled, skipping notification");
+      }
+    });
   },
 
   disconnectSocket: () => {
     const socket = get().socket;
-    if (socket && socket.connected) socket.disconnect();
+    if (socket && socket.connected) {
+      socket.off("newMessage");
+      socket.off("getOnlineUsers");
+      socket.disconnect();
+    }
   },
 }));
