@@ -7,7 +7,7 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "build": "npm install && npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
+    "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
     "start": "npm start --prefix backend"
   },
   "repository": {
@@ -21,11 +21,5 @@
   "bugs": {
     "url": "https://github.com/hellow-star/chatly/issues"
   },
-  "homepage": "https://github.com/hellow-star/chatly#readme",
-  "dependencies": {
-    "compression": "^1.8.1",
-    "express-rate-limit": "^8.1.0",
-    "helmet": "^8.1.0",
-    "lucide-react": "^0.544.0"
-  }
+  "homepage": "https://github.com/hellow-star/chatly#readme"
 }
