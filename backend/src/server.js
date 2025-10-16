@@ -23,7 +23,19 @@ const PORT = ENV.PORT || 3000;
 const __dirname = path.resolve();
 
 // Middleware
-app.use(cors({ origin: ENV.CLIENT_URL, credentials: true }));
+// Debug logging for CORS configuration
+console.log("CORS origin:", ENV.CLIENT_URL);
+console.log("Environment variables:", {
+  CLIENT_URL: process.env.CLIENT_URL,
+  NODE_ENV: process.env.NODE_ENV,
+});
+
+app.use(
+  cors({
+    origin: ENV.CLIENT_URL,
+    credentials: true,
+  })
+);
 app.use(cookieParser());
 app.use(securityMiddleware());
 app.use(rateLimiter());
@@ -33,9 +45,6 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
-app.get("/api/test", (req, res) =>
-  res.json({ message: "Hello from backend!" })
-);
 
 // Production setup
 if (ENV.NODE_ENV === "production") {
