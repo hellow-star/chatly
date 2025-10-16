@@ -37,7 +37,15 @@ export const validateEnv = () => {
 };
 
 // Security middleware configuration
-export const securityMiddleware = () => helmet();
+export const securityMiddleware = () =>
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+        "img-src": ["'self'", "data:", "res.cloudinary.com"],
+      },
+    },
+  });
 
 // Rate limiting configuration
 export const rateLimiter = () =>
