@@ -6,7 +6,7 @@ import FormField from "../components/FormField";
 import Button from "../components/Button";
 import Card from "../components/Card";
 import { useAuthStore } from "../stores/useAuthStore";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignupPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -85,13 +85,17 @@ const SignupPage = () => {
   }, [watchedPassword]);
 
   const { signUp, isSigningUp } = useAuthStore();
+  const navigate = useNavigate();
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     if (!termsAccepted) {
       // This shouldn't happen due to button being disabled, but just in case
       return;
     }
-    signUp(data.fullName, data.email, data.password);
+    const success = await signUp(data.fullName, data.email, data.password);
+    if (success) {
+      navigate("/");
+    }
   };
 
   const formVariants = {

@@ -6,7 +6,7 @@ import FormField from "../components/FormField";
 import Button from "../components/Button";
 import Card from "../components/Card";
 import { useAuthStore } from "../stores/useAuthStore";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -35,9 +35,13 @@ const LoginPage = () => {
   }, [watchedPassword]);
 
   const { login, isLoggingIn } = useAuthStore(); // Using same loading state name for consistency
+  const navigate = useNavigate();
 
-  const onSubmit = (data) => {
-    login(data);
+  const onSubmit = async (data) => {
+    const success = await login(data);
+    if (success) {
+      navigate("/");
+    }
   };
 
   const formVariants = {
